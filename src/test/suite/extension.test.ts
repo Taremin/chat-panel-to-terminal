@@ -1,11 +1,22 @@
 import * as assert from 'assert';
 import * as vscode from 'vscode';
+import * as fs from 'fs';
+import * as path from 'path';
 
 suite('Terminal Chat Panel Test Suite', () => {
 	vscode.window.showInformationMessage('Start all tests.');
 
+	// package.json を読み込んで拡張機能 ID を構築
+	const getExtensionId = () => {
+		const packageJsonPath = path.join(__dirname, '..', '..', '..', 'package.json');
+		const packageJson = JSON.parse(fs.readFileSync(packageJsonPath, 'utf8'));
+		return `${packageJson.publisher}.${packageJson.name}`;
+	};
+
+	const extensionId = getExtensionId();
+
 	test('Extension should be present', () => {
-		assert.ok(vscode.extensions.getExtension('local-dev.terminal-chat-panel'));
+		assert.ok(vscode.extensions.getExtension(extensionId));
 	});
 
 	test('Configuration should save and delete buttons', async () => {
@@ -33,7 +44,7 @@ suite('Terminal Chat Panel Test Suite', () => {
 	});
 
 	test('Chat log should persist in globalState', async () => {
-		const extension = vscode.extensions.getExtension('local-dev.terminal-chat-panel');
+		const extension = vscode.extensions.getExtension(extensionId);
 		const context = await extension?.activate(); // activation returns exports if any, but we want globalState
 		
 		// 実際には Provider 内部の globalState を直接触ることは難しいため、
@@ -42,3 +53,4 @@ suite('Terminal Chat Panel Test Suite', () => {
 		assert.ok(extension?.isActive);
 	});
 });
+
