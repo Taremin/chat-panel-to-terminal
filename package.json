@@ -1,7 +1,7 @@
 {
-  "name": "terminal-chat-panel",
-  "displayName": "Terminal Chat Panel",
-  "publisher": "local-dev",
+  "name": "chat-panel-to-terminal",
+  "displayName": "Chat Panel To Terminal",
+  "publisher": "Taremin",
   "description": "Send chat messages to VSCode terminals and save them as reusable buttons.",
   "version": "0.1.0",
   "engines": {
@@ -79,7 +79,6 @@
     "eslint": "^8.39.0",
     "glob": "^8.1.0",
     "mocha": "^10.2.0",
-    "ovsx": "^0.10.9",
     "ts-node": "^10.9.2",
     "typescript": "^5.0.4"
   },
