@@ -1,0 +1,181 @@
+body {
+	padding: 10px;
+	color: var(--vscode-editor-foreground);
+	font-family: var(--vscode-font-family);
+	background-color: var(--vscode-sideBar-background);
+}
+
+.container {
+	display: flex;
+	flex-direction: column;
+	height: 100vh;
+	box-sizing: border-box;
+}
+
+.button-area {
+	flex: 0 0 auto;
+	max-height: 150px;
+	overflow-y: auto;
+	margin-bottom: 5px;
+	display: flex;
+	flex-wrap: wrap;
+	gap: 5px;
+	align-content: flex-start;
+}
+
+.chat-log-area {
+	flex: 1;
+	overflow-y: auto;
+	margin-bottom: 5px;
+	display: flex;
+	flex-direction: column;
+	gap: 5px;
+	padding-right: 5px;
+}
+
+.button-wrapper {
+	display: inline-flex;
+	align-items: stretch;
+	background-color: var(--vscode-button-background);
+	color: var(--vscode-button-foreground);
+	border-radius: 2px;
+	overflow: hidden;
+}
+
+.button-wrapper:hover {
+	background-color: var(--vscode-button-hoverBackground);
+}
+
+.saved-button {
+	background-color: transparent;
+	color: inherit;
+	border: none;
+	padding: 4px 8px;
+	cursor: pointer;
+	font-size: 11px;
+	white-space: nowrap;
+}
+
+.delete-btn {
+	background-color: rgba(0, 0, 0, 0.1);
+	color: inherit;
+	border: none;
+	cursor: pointer;
+	padding: 0 4px;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	font-size: 10px;
+}
+
+.delete-btn:hover {
+	background-color: var(--vscode-statusBarItem-errorBackground, #c33);
+}
+
+.chat-entry {
+	display: flex;
+	align-items: flex-start;
+	background-color: var(--vscode-editor-background);
+	border-radius: 3px;
+	padding: 5px;
+	gap: 5px;
+	font-size: 12px;
+}
+
+.chat-text {
+	flex: 1;
+	word-break: break-all;
+	font-family: var(--vscode-editor-font-family);
+}
+
+.icon-button {
+	background: transparent;
+	color: var(--vscode-foreground);
+	border: none;
+	cursor: pointer;
+	padding: 2px;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	border-radius: 3px;
+}
+
+.icon-button:hover {
+	background-color: var(--vscode-toolbar-hoverBackground);
+}
+
+.divider {
+	height: 1px;
+	background-color: var(--vscode-divider);
+	margin-bottom: 5px;
+}
+
+.control-area {
+	display: flex;
+	flex-direction: column;
+	gap: 5px;
+	padding-bottom: 20px;
+}
+
+.terminal-row {
+	display: flex;
+	gap: 5px;
+	align-items: center;
+}
+
+#terminal-select {
+	flex: 1;
+	background-color: var(--vscode-dropdown-background);
+	color: var(--vscode-dropdown-foreground);
+	border: 1px solid var(--vscode-dropdown-border);
+	padding: 4px;
+}
+
+.input-container {
+	position: relative;
+}
+
+#suggestion-list {
+	position: absolute;
+	bottom: 100%;
+	left: 0;
+	width: 100%;
+	max-height: 200px;
+	overflow-y: auto;
+	background-color: var(--vscode-dropdown-background);
+	border: 1px solid var(--vscode-dropdown-border);
+	z-index: 100;
+	display: none;
+	box-shadow: 0 -2px 5px rgba(0,0,0,0.2);
+}
+
+.suggestion-item {
+	padding: 4px 8px;
+	cursor: pointer;
+	font-size: 11px;
+	overflow: hidden;
+	text-overflow: ellipsis;
+	white-space: nowrap;
+}
+
+.suggestion-item:hover, .suggestion-item.selected {
+	background-color: var(--vscode-list-hoverBackground);
+	color: var(--vscode-list-hoverForeground);
+}
+
+#chat-input {
+	width: 100%;
+	height: 60px;
+	background-color: var(--vscode-input-background);
+	color: var(--vscode-input-foreground);
+	border: 1px solid var(--vscode-input-border);
+	padding: 5px;
+	resize: none;
+	box-sizing: border-box;
+	font-family: var(--vscode-editor-font-family);
+	font-size: var(--vscode-editor-font-size);
+}
+
+#chat-input:focus {
+	outline: 1px solid var(--vscode-focusBorder);
+}

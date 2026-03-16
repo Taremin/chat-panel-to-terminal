@@ -1,0 +1,89 @@
+{
+  "name": "terminal-chat-panel",
+  "displayName": "Terminal Chat Panel",
+  "publisher": "local-dev",
+  "description": "Send chat messages to VSCode terminals and save them as reusable buttons.",
+  "version": "0.1.0",
+  "engines": {
+    "vscode": "^1.80.0"
+  },
+  "categories": [
+    "Other"
+  ],
+  "activationEvents": [],
+  "main": "./out/extension.js",
+  "contributes": {
+    "viewsContainers": {
+      "activitybar": [
+        {
+          "id": "terminal-chat-explorer",
+          "title": "Terminal Chat",
+          "icon": "$(terminal)"
+        }
+      ]
+    },
+    "views": {
+      "terminal-chat-explorer": [
+        {
+          "type": "webview",
+          "id": "terminal-chat-view",
+          "name": "Chat"
+        }
+      ]
+    },
+    "configuration": {
+      "title": "Terminal Chat Panel",
+      "properties": {
+        "terminalChatPanel.buttons": {
+          "type": "array",
+          "description": "List of saved buttons for quick terminal commands.",
+          "default": [],
+          "items": {
+            "type": "object",
+            "properties": {
+              "label": {
+                "type": "string",
+                "description": "Label of the button."
+              },
+              "command": {
+                "type": "string",
+                "description": "Command to send to the terminal."
+              }
+            },
+            "required": [
+              "label",
+              "command"
+            ]
+          }
+        }
+      }
+    }
+  },
+  "scripts": {
+    "vscode:prepublish": "npm run compile",
+    "compile": "tsc -p ./",
+    "watch": "tsc -watch -p ./",
+    "pretest": "npm run compile",
+    "lint": "eslint src --ext ts",
+    "test": "node ./out/test/runTest.js"
+  },
+  "devDependencies": {
+    "@types/glob": "^8.1.0",
+    "@types/mocha": "^10.0.1",
+    "@types/node": "20.x",
+    "@types/vscode": "^1.80.0",
+    "@typescript-eslint/eslint-plugin": "^5.59.1",
+    "@typescript-eslint/parser": "^5.59.1",
+    "@vscode/test-electron": "^2.3.0",
+    "@vscode/vsce": "^3.7.1",
+    "eslint": "^8.39.0",
+    "glob": "^8.1.0",
+    "mocha": "^10.2.0",
+    "ovsx": "^0.10.9",
+    "ts-node": "^10.9.2",
+    "typescript": "^5.0.4"
+  },
+  "dependencies": {
+    "@vscode/codicons": "^0.0.45"
+  }
+}
