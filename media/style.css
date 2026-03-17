@@ -208,6 +208,30 @@ body {
 	padding: 4px;
 }
 
+.settings-panel {
+	background-color: var(--vscode-editor-background);
+	border: 1px solid var(--vscode-divider);
+	padding: 8px;
+	border-radius: 4px;
+	margin-top: 5px;
+	margin-bottom: 5px;
+}
+
+.settings-row {
+	display: flex;
+	justify-content: space-between;
+	align-items: center;
+	font-size: 11px;
+}
+
+#send-delay-input {
+	width: 60px;
+	background-color: var(--vscode-input-background);
+	color: var(--vscode-input-foreground);
+	border: 1px solid var(--vscode-input-border);
+	padding: 2px 4px;
+}
+
 .input-container {
 	position: relative;
 }

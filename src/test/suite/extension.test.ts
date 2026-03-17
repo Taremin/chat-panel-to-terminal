@@ -77,5 +77,21 @@ suite('Terminal Chat Panel Test Suite', () => {
 		// Provider を export してテストから触れるようにする必要があります。
 		assert.ok(extension?.isActive);
 	});
+
+	test('Configuration should save sendDelay', async () => {
+		const config = vscode.workspace.getConfiguration('terminalChatPanel');
+		const originalDelay = config.get<number>('sendDelay');
+		const testDelay = 500;
+
+		// 更新のテスト
+		await config.update('sendDelay', testDelay, vscode.ConfigurationTarget.Global);
+		let updatedDelay = vscode.workspace.getConfiguration('terminalChatPanel').get<number>('sendDelay');
+		assert.strictEqual(updatedDelay, testDelay);
+
+		// 元に戻す（クリーンアップ）
+		await config.update('sendDelay', originalDelay, vscode.ConfigurationTarget.Global);
+		const finalDelay = vscode.workspace.getConfiguration('terminalChatPanel').get<number>('sendDelay');
+		assert.strictEqual(finalDelay, originalDelay);
+	});
 });
 

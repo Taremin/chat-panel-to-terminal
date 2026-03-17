@@ -76,7 +76,7 @@
     "watch": "tsc -watch -p ./",
     "pretest": "npm run compile",
     "lint": "eslint src --ext ts",
-    "test": "node ./out/test/runTest.js"
+    "test": "node -e \"process.env.ELECTRON_RUN_AS_NODE = '0'; require('./out/test/runTest.js')\""
   },
   "devDependencies": {
     "@types/glob": "^8.1.0",

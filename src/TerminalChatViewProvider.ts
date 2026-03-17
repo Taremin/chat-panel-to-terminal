@@ -139,12 +139,16 @@ export class TerminalChatViewProvider implements vscode.WebviewViewProvider {
 			if (e.affectsConfiguration('terminalChatPanel.buttons')) {
 				this._updateButtons();
 			}
+			if (e.affectsConfiguration('terminalChatPanel.sendDelay')) {
+				this._updateSendDelay();
+			}
 		});
 
 		// Initial data send
 		this._updateTerminals();
 		this._updateButtons();
 		this._updateChatLog();
+		this._updateSendDelay();
 	}
 
 	private async _addChatLog(message: string) {
@@ -179,6 +183,14 @@ export class TerminalChatViewProvider implements vscode.WebviewViewProvider {
 		}
 	}
 
+	private _updateSendDelay() {
+		if (this._view) {
+			const config = vscode.workspace.getConfiguration('terminalChatPanel');
+			const sendDelay = config.get<number>('sendDelay') || 100;
+			this._view.webview.postMessage({ type: 'updateSendDelay', value: sendDelay });
+		}
+	}
+
 	private _getHtmlForWebview(webview: vscode.Webview) {
 		const scriptUri = webview.asWebviewUri(vscode.Uri.joinPath(this._extensionUri, 'media', 'main.js'));
 		const styleUri = webview.asWebviewUri(vscode.Uri.joinPath(this._extensionUri, 'media', 'style.css'));
@@ -208,7 +220,14 @@ export class TerminalChatViewProvider implements vscode.WebviewViewProvider {
 							<select id="terminal-select">
 								<option value="">ターミナルを選択...</option>
 							</select>
+							<button id="settings-toggle-btn" title="Settings" class="icon-button"><i class="codicon codicon-settings"></i></button>
 							<button id="clear-log-btn" title="Clear History" class="icon-button"><i class="codicon codicon-trash"></i></button>
+						</div>
+						<div id="settings-panel" class="settings-panel" style="display: none;">
+							<div class="settings-row">
+								<label for="send-delay-input">Send Delay (ms):</label>
+								<input type="number" id="send-delay-input" min="0" max="5000" step="50">
+							</div>
 						</div>
 						<div class="input-container">
 							<div id="suggestion-list"></div>

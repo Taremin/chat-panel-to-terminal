@@ -7,6 +7,9 @@
 	const buttonContainer = document.getElementById('button-container');
 	const chatLogContainer = document.getElementById('chat-log-container');
 	const clearLogBtn = document.getElementById('clear-log-btn');
+	const settingsToggleBtn = document.getElementById('settings-toggle-btn');
+	const settingsPanel = document.getElementById('settings-panel');
+	const sendDelayInput = document.getElementById('send-delay-input');
 	const suggestionList = document.getElementById('suggestion-list');
 
 	let allFiles = [];
@@ -246,6 +249,22 @@
 	clearLogBtn.addEventListener('click', () => {
 		vscode.postMessage({ type: 'clearLog' });
 	});
+	
+	settingsToggleBtn.addEventListener('click', () => {
+		const isVisible = settingsPanel.style.display === 'block';
+		settingsPanel.style.display = isVisible ? 'none' : 'block';
+		settingsToggleBtn.classList.toggle('active', !isVisible);
+	});
+	
+	sendDelayInput.addEventListener('change', () => {
+		const value = parseInt(sendDelayInput.value, 10);
+		if (!isNaN(value) && value >= 0) {
+			vscode.postMessage({
+				type: 'updateSendDelay',
+				value: value
+			});
+		}
+	});
 
 	window.addEventListener('message', event => {
 		const message = event.data;
@@ -264,6 +283,11 @@
 						}
 						terminalSelect.appendChild(option);
 					});
+					break;
+				}
+			case 'updateSendDelay':
+				{
+					sendDelayInput.value = message.value;
 					break;
 				}
 			case 'updateButtons':
