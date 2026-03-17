@@ -3,7 +3,7 @@
   "displayName": "Chat Panel To Terminal",
   "publisher": "Taremin",
   "description": "Send chat messages to VSCode terminals and save them as reusable buttons.",
-  "version": "0.2.1",
+  "version": "0.2.2",
   "license": "MIT",
   "engines": {
     "vscode": "^1.80.0"
