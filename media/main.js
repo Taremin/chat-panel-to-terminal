@@ -396,4 +396,7 @@
 	vscode.postMessage({ type: 'refreshTerminals' });
 	// Pre-fetch files
 	vscode.postMessage({ type: 'searchFiles' });
+
+	// 初期化完了を通知して最新の状態をリクエストする
+	vscode.postMessage({ type: 'initialized' });
 }());

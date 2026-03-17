@@ -5,7 +5,11 @@ export function activate(context: vscode.ExtensionContext) {
 	const provider = new TerminalChatViewProvider(context.extensionUri, context);
 
 	context.subscriptions.push(
-		vscode.window.registerWebviewViewProvider(TerminalChatViewProvider.viewType, provider)
+		vscode.window.registerWebviewViewProvider(TerminalChatViewProvider.viewType, provider, {
+			webviewOptions: {
+				retainContextWhenHidden: true
+			}
+		})
 	);
 }
 

@@ -126,6 +126,15 @@ export class TerminalChatViewProvider implements vscode.WebviewViewProvider {
 						this._updateTerminals();
 						break;
 					}
+				case 'initialized':
+					{
+						// Webview側の初期化が完了したタイミングですべてのデータを送信する
+						this._updateTerminals();
+						this._updateButtons();
+						this._updateChatLog();
+						this._updateSendDelay();
+						break;
+					}
 			}
 		});
 
