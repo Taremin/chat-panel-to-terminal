@@ -346,6 +346,26 @@
 					chatInput.dispatchEvent(new Event('input'));
 					break;
 				}
+			case 'setBusy':
+				{
+					const isBusy = message.value;
+					chatInput.disabled = isBusy;
+					terminalSelect.disabled = isBusy;
+					clearLogBtn.disabled = isBusy;
+					
+					const allButtons = document.querySelectorAll('button');
+					allButtons.forEach(btn => {
+						btn.disabled = isBusy;
+					});
+
+					if (isBusy) {
+						chatInput.placeholder = '送信中...';
+					} else {
+						chatInput.placeholder = 'コマンドを入力してEnterで送信...';
+						chatInput.focus();
+					}
+					break;
+				}
 		}
 	});
 

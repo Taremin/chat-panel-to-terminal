@@ -61,6 +61,11 @@
               "command"
             ]
           }
+        },
+        "terminalChatPanel.sendDelay": {
+          "type": "number",
+          "description": "Delay in milliseconds between sending command and sending Enter key (to bypass gemini-cli's paste protection).",
+          "default": 100
         }
       }
     }

@@ -31,17 +31,27 @@ export class TerminalChatViewProvider implements vscode.WebviewViewProvider {
 			switch (data.type) {
 				case 'sendToTerminal':
 					{
+						const config = vscode.workspace.getConfiguration('terminalChatPanel');
+						const delay = config.get<number>('sendDelay') || 100;
+
 						let terminal = vscode.window.terminals.find(t => t.name === data.terminalName);
 						if (!terminal) {
-							// フォールバック: アクティブなターミナル、または最初のターミナル
 							terminal = vscode.window.activeTerminal || vscode.window.terminals[0];
 						}
 
 						if (terminal) {
-							terminal.sendText(data.value);
 							if (data.autoEnter) {
-								terminal.sendText('', true);
+								this._view?.webview.postMessage({ type: 'setBusy', value: true });
 							}
+							
+							terminal.sendText(data.value, false);
+							
+							if (data.autoEnter) {
+								await new Promise(resolve => setTimeout(resolve, delay));
+								terminal.sendText('\x0a', false);
+								this._view?.webview.postMessage({ type: 'setBusy', value: false });
+							}
+							
 							await this._addChatLog(data.value);
 						} else {
 							vscode.window.showErrorMessage(`No active terminal found to send command.`);
