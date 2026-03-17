@@ -49,6 +49,11 @@
               "command": {
                 "type": "string",
                 "description": "Command to send to the terminal."
+              },
+              "autoEnter": {
+                "type": "boolean",
+                "description": "Whether to send an additional Enter key after the command.",
+                "default": false
               }
             },
             "required": [
@@ -75,7 +80,7 @@
     "@types/vscode": "^1.80.0",
     "@typescript-eslint/eslint-plugin": "^5.59.1",
     "@typescript-eslint/parser": "^5.59.1",
-    "@vscode/test-electron": "^2.3.0",
+    "@vscode/test-electron": "^2.5.2",
     "@vscode/vsce": "^3.7.1",
     "eslint": "^8.39.0",
     "glob": "^8.1.0",

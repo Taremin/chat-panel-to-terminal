@@ -39,10 +39,36 @@ export class TerminalChatViewProvider implements vscode.WebviewViewProvider {
 
 						if (terminal) {
 							terminal.sendText(data.value);
+							if (data.autoEnter) {
+								terminal.sendText('', true);
+							}
 							await this._addChatLog(data.value);
 						} else {
 							vscode.window.showErrorMessage(`No active terminal found to send command.`);
 						}
+						break;
+					}
+				case 'updateButton':
+					{
+						const config = vscode.workspace.getConfiguration('terminalChatPanel');
+						const buttons = config.get<any[]>('buttons') || [];
+						const index = data.index;
+						if (index >= 0 && index < buttons.length) {
+							buttons[index] = {
+								label: data.button.label,
+								command: data.button.command,
+								autoEnter: data.button.autoEnter
+							};
+							await config.update('buttons', buttons, vscode.ConfigurationTarget.Global);
+							this._updateButtons();
+						}
+						break;
+					}
+				case 'updateButtonOrder':
+					{
+						const config = vscode.workspace.getConfiguration('terminalChatPanel');
+						await config.update('buttons', data.buttons, vscode.ConfigurationTarget.Global);
+						this._updateButtons();
 						break;
 					}
 				case 'saveButton':

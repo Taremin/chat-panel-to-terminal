@@ -114,6 +114,121 @@
 		}
 	}
 
+	// Setup Menu
+	const menu = document.createElement('div');
+	menu.className = 'dropdown-menu';
+	document.body.appendChild(menu);
+
+	let currentButtonIndex = -1;
+	let currentButtonData = null;
+
+	document.addEventListener('click', (e) => {
+		if (!menu.contains(e.target)) {
+			menu.style.display = 'none';
+		}
+	});
+
+	function showMenu(e, index, buttonData) {
+		e.stopPropagation();
+		currentButtonIndex = index;
+		currentButtonData = buttonData;
+
+		menu.innerHTML = `
+			<div class="menu-item" id="menu-toggle-auto-enter">
+				<div class="menu-icon ${buttonData.autoEnter ? 'active' : ''}">
+					<i class="codicon codicon-${buttonData.autoEnter ? 'pass-filled' : 'circle-outline'}"></i>
+				</div>
+				<span>Enter自動追加: ${buttonData.autoEnter ? 'ON' : 'OFF'}</span>
+			</div>
+			<div class="menu-item danger" id="menu-delete-button">
+				<div class="menu-icon">
+					<i class="codicon codicon-trash"></i>
+				</div>
+				<span>削除</span>
+			</div>
+		`;
+
+		menu.style.display = 'block';
+		
+		// Position menu
+		const rect = e.target.getBoundingClientRect();
+		let top = rect.bottom + window.scrollY;
+		let left = rect.left + window.scrollX;
+
+		// Check screen bounds
+		if (left + 150 > window.innerWidth) {
+			left = window.innerWidth - 160;
+		}
+		if (top + 100 > window.innerHeight) {
+			top = rect.top - menu.offsetHeight;
+		}
+
+		menu.style.top = `${top}px`;
+		menu.style.left = `${left}px`;
+
+		document.getElementById('menu-toggle-auto-enter').onclick = () => {
+			const updated = { ...buttonData, autoEnter: !buttonData.autoEnter };
+			vscode.postMessage({
+				type: 'updateButton',
+				index: index,
+				button: updated
+			});
+			menu.style.display = 'none';
+		};
+
+		document.getElementById('menu-delete-button').onclick = () => {
+			vscode.postMessage({
+				type: 'deleteButton',
+				value: buttonData.command
+			});
+			menu.style.display = 'none';
+		};
+	}
+
+	// Drag and Drop
+	let draggedItem = null;
+	let draggedIndex = -1;
+
+	function setupDragAndDrop(item, index) {
+		item.draggable = true;
+		item.addEventListener('dragstart', (e) => {
+			draggedItem = item;
+			draggedIndex = index;
+			item.classList.add('dragging');
+			e.dataTransfer.effectAllowed = 'move';
+		});
+
+		item.addEventListener('dragend', () => {
+			item.classList.remove('dragging');
+			const allItems = buttonContainer.querySelectorAll('.button-wrapper');
+			allItems.forEach(i => i.classList.remove('drag-over'));
+		});
+
+		item.addEventListener('dragover', (e) => {
+			e.preventDefault();
+			e.dataTransfer.dropEffect = 'move';
+			item.classList.add('drag-over');
+		});
+
+		item.addEventListener('dragleave', () => {
+			item.classList.remove('drag-over');
+		});
+
+		item.addEventListener('drop', (e) => {
+			e.preventDefault();
+			if (draggedIndex !== index) {
+				const buttons = Array.from(buttonContainer.querySelectorAll('.button-wrapper')).map(w => w._buttonData);
+				const [removed] = buttons.splice(draggedIndex, 1);
+				buttons.splice(index, 0, removed);
+				
+				vscode.postMessage({
+					type: 'updateButtonOrder',
+					buttons: buttons
+				});
+			}
+		});
+	}
+
 	function selectSuggestion(file) {
 		const value = chatInput.value;
 		const beforeAt = value.substring(0, atSymbolIndex);
@@ -154,38 +269,40 @@
 			case 'updateButtons':
 				{
 					buttonContainer.innerHTML = '';
-					message.buttons.forEach(btn => {
+					message.buttons.forEach((btn, index) => {
 						const wrapper = document.createElement('div');
 						wrapper.className = 'button-wrapper';
+						wrapper._buttonData = btn; // Store data for D&D
+
+						const handle = document.createElement('div');
+						handle.className = 'drag-handle';
+						handle.innerHTML = '<i class="codicon codicon-gripper"></i>';
+						wrapper.appendChild(handle);
 
 						const button = document.createElement('button');
 						button.className = 'saved-button';
 						button.textContent = btn.label;
-						button.title = btn.command;
+						button.title = btn.command + (btn.autoEnter ? ' (↵ auto)' : '');
 						button.addEventListener('click', () => {
 							const terminalName = terminalSelect.value;
 							vscode.postMessage({
 								type: 'sendToTerminal',
 								value: btn.command,
-								terminalName: terminalName
+								terminalName: terminalName,
+								autoEnter: !!btn.autoEnter
 							});
 						});
-
-						const deleteBtn = document.createElement('button');
-						deleteBtn.className = 'delete-btn';
-						deleteBtn.title = 'Delete Button';
-						deleteBtn.innerHTML = '<i class="codicon codicon-close"></i>';
-						deleteBtn.addEventListener('click', (e) => {
-							e.stopPropagation();
-							vscode.postMessage({
-								type: 'deleteButton',
-								value: btn.command
-							});
-						});
-
 						wrapper.appendChild(button);
-						wrapper.appendChild(deleteBtn);
+
+						const settingsBtn = document.createElement('button');
+						settingsBtn.className = 'settings-btn';
+						settingsBtn.title = 'Settings';
+						settingsBtn.innerHTML = '<i class="codicon codicon-settings"></i>';
+						settingsBtn.addEventListener('click', (e) => showMenu(e, index, btn));
+						wrapper.appendChild(settingsBtn);
+
 						buttonContainer.appendChild(wrapper);
+						setupDragAndDrop(wrapper, index);
 					});
 					break;
 				}

@@ -21,9 +21,9 @@ suite('Terminal Chat Panel Test Suite', () => {
 
 	test('Configuration should save and delete buttons', async () => {
 		const config = vscode.workspace.getConfiguration('terminalChatPanel');
-		const testButton = { label: 'test-cmd', command: 'test-cmd' };
+		const testButton = { label: 'test-cmd', command: 'test-cmd', autoEnter: true };
 
-		// 1. 追加のテスト
+		// 1. 追加のテスト (autoEnter を含む)
 		let buttons = config.get<any[]>('buttons') || [];
 		const originalLength = buttons.length;
 		
@@ -32,7 +32,9 @@ suite('Terminal Chat Panel Test Suite', () => {
 		
 		let updatedButtons = vscode.workspace.getConfiguration('terminalChatPanel').get<any[]>('buttons') || [];
 		assert.strictEqual(updatedButtons.length, originalLength + 1);
-		assert.ok(updatedButtons.some(b => b.command === 'test-cmd'));
+		const added = updatedButtons.find(b => b.command === 'test-cmd');
+		assert.ok(added);
+		assert.strictEqual(added.autoEnter, true);
 
 		// 2. 削除のテスト
 		updatedButtons = updatedButtons.filter(b => b.command !== 'test-cmd');
@@ -41,6 +43,29 @@ suite('Terminal Chat Panel Test Suite', () => {
 		const finalButtons = vscode.workspace.getConfiguration('terminalChatPanel').get<any[]>('buttons') || [];
 		assert.strictEqual(finalButtons.length, originalLength);
 		assert.ok(!finalButtons.some(b => b.command === 'test-cmd'));
+	});
+
+	test('Configuration should handle button reordering', async () => {
+		const config = vscode.workspace.getConfiguration('terminalChatPanel');
+		const originalButtons = config.get<any[]>('buttons') || [];
+		
+		const btn1 = { label: 'btn1', command: 'cmd1' };
+		const btn2 = { label: 'btn2', command: 'cmd2' };
+		
+		// 準備
+		await config.update('buttons', [btn1, btn2], vscode.ConfigurationTarget.Global);
+		
+		// 入れ替え
+		const reordered = [btn2, btn1];
+		await config.update('buttons', reordered, vscode.ConfigurationTarget.Global);
+		
+		const finalButtons = vscode.workspace.getConfiguration('terminalChatPanel').get<any[]>('buttons') || [];
+		assert.strictEqual(finalButtons.length, 2);
+		assert.strictEqual(finalButtons[0].label, 'btn2');
+		assert.strictEqual(finalButtons[1].label, 'btn1');
+
+		// 元に戻す（クリーンアップ）
+		await config.update('buttons', originalButtons, vscode.ConfigurationTarget.Global);
 	});
 
 	test('Chat log should persist in globalState', async () => {
